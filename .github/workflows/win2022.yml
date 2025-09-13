@@ -8,17 +8,13 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    # دانلود ngrok از Release (همون روش قبلی که کار کرده)
+    # دانلود ngrok از Release
     - name: Download ngrok
       run: curl -L -o ngrok.zip https://github.com/amirrezanosrati/R/releases/latest/download/ngrok-v3-stable-windows-amd64.zip
 
-    # دانلود بقیه فایل‌ها از ریپو شاخه main
-    - name: Download other files
-      run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start-2022.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.png -OutFile wallpaper.png
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.bat -OutFile wallpaper.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/loop.bat -OutFile loop.bat
+    # Checkout کل ریپو
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     # اکسترکت ngrok
     - name: Extract ngrok
@@ -30,14 +26,16 @@ jobs:
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
-    # فعال کردن دسترسی RDP
+    # فعال کردن RDP و کپی فایل‌ها
     - name: Enable RDP
       run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
-        copy wallpaper.png C:\Users\Public\Desktop\wallpaper.png
-        copy wallpaper.bat C:\Users\Public\Desktop\wallpaper.bat
+        copy .\wallpaper.png C:\Users\Public\Desktop\wallpaper.png
+        copy .\wallpaper.bat C:\Users\Public\Desktop\wallpaper.bat
+        copy .\start-2022.bat .\start-2022.bat
+        copy .\loop.bat .\loop.bat
 
     # باز کردن تونل Ngrok
     - name: Open Tunnel
