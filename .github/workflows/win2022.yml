@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    # Checkout کل ریپو (فایل‌های ngrok.zip، start-2022.bat، ... باید داخل ریپو باشند)
+    # Checkout کل ریپو (file.zip و بقیه فایل‌ها داخل ریپو باشند)
     - name: Checkout repository
       uses: actions/checkout@v3
 
@@ -16,9 +16,9 @@ jobs:
     - name: List files
       run: dir
 
-    # اکسترکت ngrok
+    # اکسترکت ngrok (حالا اسم فایل file.zip هست)
     - name: Extract ngrok
-      run: Expand-Archive .\ngrok-v3-stable-windows-amd64.zip -DestinationPath .\ngrok
+      run: Expand-Archive .\file.zip -DestinationPath .\ngrok
 
     # تنظیم Ngrok
     - name: Connect to Ngrok
