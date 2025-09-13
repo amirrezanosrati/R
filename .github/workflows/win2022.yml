@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Making the Core
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok.zip
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/file.zip -OutFile ngrok.zip
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start.bat
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.png -OutFile wallpaper.png
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.bat -OutFile wallpaper.bat
