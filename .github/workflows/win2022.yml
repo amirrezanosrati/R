@@ -8,13 +8,11 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    # دانلود فایل ngrok از Secret
-    - name: Download ngrok from secret link
-      run: Invoke-WebRequest $Env:NGROK_LINK -OutFile ngrok.zip
-      env:
-        NGROK_LINK: ${{ secrets.NGROK_LINK }}
+    # دانلود ngrok از Release (همون روش قبلی که کار کرده)
+    - name: Download ngrok
+      run: curl -L -o ngrok.zip https://github.com/amirrezanosrati/R/releases/latest/download/ngrok-v3-stable-windows-amd64.zip
 
-    # دانلود بقیه فایل‌ها از ریپو (شاخه main)
+    # دانلود بقیه فایل‌ها از ریپو شاخه main
     - name: Download other files
       run: |
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start-2022.bat
