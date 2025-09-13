@@ -8,24 +8,19 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    - name: Making the Core
-      run: |
-        Invoke-WebRequest https://github.com/amirrezanosrati/R/raw/refs/heads/master/file.zip -OutFile ngrok.zip
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.png -OutFile wallpaper.png
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.bat -OutFile wallpaper.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/loop.bat -OutFile loop.bat
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Extracting Ngrok File
-      run: Expand-Archive ngrok.zip
+    - name: Extract ngrok
+      run: Expand-Archive file.zip -DestinationPath ngrok
 
     - name: Connect to Ngrok
       run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
-    - name: Enabling access to RDP
-      run: | 
+    - name: Enable RDP
+      run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
@@ -35,8 +30,8 @@ jobs:
     - name: Open Tunnel
       run: Start-Process Powershell -ArgumentList '-Noexit -Command ".\ngrok\ngrok.exe tcp --region ap 3389"'
 
-    - name: Connect to your RDP
-      run: cmd /c start.bat
+    - name: Connect to RDP
+      run: cmd /c start-2022.bat
 
-    - name: Successfully made! You can close the tab now.
+    - name: Loop
       run: cmd /c loop.bat
