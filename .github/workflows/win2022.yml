@@ -8,24 +8,31 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    - name: Download ngrok from Release
-      run: curl -L -o ngrok.zip https://github.com/amirrezanosrati/R/releases/latest/download/ngrok-v3-stable-windows-amd64.zip
+    # دانلود فایل ngrok از Secret
+    - name: Download ngrok from secret link
+      run: Invoke-WebRequest $Env:NGROK_LINK -OutFile ngrok.zip
+      env:
+        NGROK_LINK: ${{ secrets.NGROK_LINK }}
 
+    # دانلود بقیه فایل‌ها از ریپو (شاخه main)
     - name: Download other files
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start-2022.bat
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.png -OutFile wallpaper.png
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.bat -OutFile wallpaper.bat
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/loop.bat -OutFile loop.bat
 
+    # اکسترکت ngrok
     - name: Extract ngrok
       run: Expand-Archive ngrok.zip -DestinationPath ngrok
 
+    # تنظیم Ngrok
     - name: Connect to Ngrok
       run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
+    # فعال کردن دسترسی RDP
     - name: Enable RDP
       run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
@@ -34,11 +41,14 @@ jobs:
         copy wallpaper.png C:\Users\Public\Desktop\wallpaper.png
         copy wallpaper.bat C:\Users\Public\Desktop\wallpaper.bat
 
+    # باز کردن تونل Ngrok
     - name: Open Tunnel
       run: Start-Process Powershell -ArgumentList '-Noexit -Command ".\ngrok\ngrok.exe tcp --region ap 3389"'
 
+    # اجرا کردن RDP
     - name: Connect to RDP
       run: cmd /c start-2022.bat
 
+    # حلقه برای ادامه کار
     - name: Loop
       run: cmd /c loop.bat
