@@ -8,11 +8,18 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    - name: Download ngrok from Release
+      run: curl -L -o ngrok.zip https://github.com/amirrezanosrati/R/releases/latest/download/ngrok-v3-stable-windows-amd64.zip
+
+    - name: Download other files
+      run: |
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.png -OutFile wallpaper.png
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.bat -OutFile wallpaper.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/loop.bat -OutFile loop.bat
 
     - name: Extract ngrok
-      run: Expand-Archive file.zip -DestinationPath ngrok
+      run: Expand-Archive ngrok.zip -DestinationPath ngrok
 
     - name: Connect to Ngrok
       run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
