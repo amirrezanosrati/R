@@ -13,7 +13,7 @@ jobs:
 
     - name: Download other files
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start-2022.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/start.bat -OutFile start.bat
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.png -OutFile wallpaper.png
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/wallpaper.bat -OutFile wallpaper.bat
         Invoke-WebRequest https://raw.githubusercontent.com/amirrezanosrati/R/main/loop.bat -OutFile loop.bat
