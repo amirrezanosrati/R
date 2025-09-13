@@ -8,17 +8,17 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-    # دانلود ngrok از Release
-    - name: Download ngrok
-      run: curl -L -o ngrok.zip https://github.com/amirrezanosrati/R/releases/latest/download/ngrok-v3-stable-windows-amd64.zip
-
-    # Checkout کل ریپو
+    # Checkout کل ریپو (فایل‌های ngrok.zip، start-2022.bat، ... باید داخل ریپو باشند)
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # بررسی وجود فایل‌ها
+    - name: List files
+      run: dir
+
     # اکسترکت ngrok
     - name: Extract ngrok
-      run: Expand-Archive ngrok.zip -DestinationPath ngrok
+      run: Expand-Archive .\ngrok-v3-stable-windows-amd64.zip -DestinationPath .\ngrok
 
     # تنظیم Ngrok
     - name: Connect to Ngrok
