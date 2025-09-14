@@ -35,19 +35,28 @@ jobs:
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
         
-        # Enable Administrator account and set password
+        # Set administrator password
         $adminPassword = "qaz123!@#"
         $securePassword = ConvertTo-SecureString $adminPassword -AsPlainText -Force
         
-        # Enable administrator account
-        Enable-LocalUser -Name "Administrator"
-        Set-LocalUser -Name "Administrator" -Password $securePassword
+        # Check if Administrator account exists and enable it
+        $adminAccount = Get-LocalUser -Name "Administrator" -ErrorAction SilentlyContinue
+        if ($adminAccount) {
+            Enable-LocalUser -Name "Administrator"
+            Set-LocalUser -Name "Administrator" -Password $securePassword
+            Write-Host "Administrator account enabled and password set"
+        } else {
+            # Create new administrator user
+            New-LocalUser -Name "Administrator" -Password $securePassword -AccountNeverExpires -Description "Admin Account for RDP"
+            Add-LocalGroupMember -Group "Administrators" -Member "Administrator"
+            Write-Host "New Administrator account created"
+        }
         
         # Add administrator to remote desktop users group
         Add-LocalGroupMember -Group "Remote Desktop Users" -Member "Administrator"
         
         Write-Host "=============================================="
-        Write-Host "Administrator account enabled successfully!"
+        Write-Host "Administrator account configured successfully!"
         Write-Host "Username: Administrator"
         Write-Host "Password: qaz123!@#"
         Write-Host "=============================================="
