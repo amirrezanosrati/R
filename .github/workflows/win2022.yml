@@ -52,29 +52,11 @@ jobs:
         Write-Host "Password: qaz123!@#"
         Write-Host "=============================================="
 
-    - name: Create connection info file
-      shell: powershell
-      run: |
-        # Create a connection info file
-        @"
-        @echo off
-        echo ==============================================
-        echo    Windows 2022 RDP Connection Information
-        echo ==============================================
-        echo.
-        echo Username: Administrator
-        echo Password: qaz123!@#
-        echo.
-        echo Waiting for Ngrok tunnel to be established...
-        echo ==============================================
-        pause
-        "@ > connection-info.bat
-
-    - name: Start Ngrok Tunnel
+    - name: Start Ngrok Tunnel and display connection info
       shell: powershell
       run: |
         # Start Ngrok in background
-        $ngrokProcess = Start-Process -FilePath ".\ngrok\ngrok.exe" -ArgumentList "tcp 3389" -PassThru
+        Start-Process -FilePath ".\ngrok\ngrok.exe" -ArgumentList "tcp 3389" -NoNewWindow
         
         # Wait for tunnel to establish
         Start-Sleep -Seconds 15
@@ -94,21 +76,6 @@ jobs:
                 Write-Host "Username: Administrator"
                 Write-Host "Password: qaz123!@#"
                 Write-Host "=============================================="
-                
-                # Save connection info to a file
-                @"
-==============================================
-Windows 2022 RDP Connection Information
-==============================================
-Host: $hostname
-Port: $port
-Username: Administrator
-Password: qaz123!@#
-==============================================
-"@ > rdp-connection-info.txt
-                
-                # Display connection info
-                Get-Content rdp-connection-info.txt
             }
         } catch {
             Write-Host "Failed to retrieve Ngrok tunnel information: $($_.Exception.Message)"
@@ -116,7 +83,7 @@ Password: qaz123!@#
         }
         
         # Keep the runner active
-        Write-Host "RDP session is now active. Press Ctrl+C to stop."
+        Write-Host "RDP session is now active. Press Ctrl+C in log to stop."
         while ($true) {
             Write-Host "RDP session active - $(Get-Date)"
             Start-Sleep -Seconds 300
